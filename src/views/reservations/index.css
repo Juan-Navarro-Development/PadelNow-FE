@@ -1,0 +1,46 @@
+/* DRAG AND DROP */
+.drag-and-drop{
+  display: flex;
+  grid-gap: 40px;
+}
+
+.dd-zone{
+  display: flex;
+  flex-direction: column;
+  grid-gap: 16px;
+  height: 100%;
+}
+
+.scoreItems{
+  border: "1px solid grey";
+  display:"flex";
+  align-items:"center";
+}
+
+.timeSlot{
+  border: 1px solid ;
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  min-height:50px;
+}
+
+.timeSlotHeader{
+  background-color: rgb(158, 190, 211);
+  border: 1px solid ;
+  display: flex;
+  justify-content: center;
+  align-items:center;
+  min-height:30px;
+}
+
+.userReserved{
+  background-color: rgb(185, 236, 200) ;
+}
+.trainerReserved{
+  background-color:rgb(153, 206, 248) ;
+}
+
+.blockedReserved{
+  background-color:rgb(251, 195, 174) ;
+}

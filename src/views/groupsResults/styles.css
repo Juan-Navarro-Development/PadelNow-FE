@@ -1,0 +1,28 @@
+
+.BoxTop {
+    border-bottom: 1px solid blue;
+  }
+  
+  .BoxBottom {
+    padding: .5rem;
+  
+  }
+  
+  .BottomLine {
+    border-bottom: 1px solid blue;
+  
+  }
+  
+  .TopLine {
+    border-top: 1px solid blue;
+  
+  }
+  
+  .RightLine {
+    border-right: 1px solid blue;
+  
+  }
+
+  .WinnerBackGround{
+    background-color: lightsteelblue;
+  }

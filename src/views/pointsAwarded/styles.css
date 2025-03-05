@@ -1,0 +1,25 @@
+.PointBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  border-bottom: 1px solid #ad6af9;
+}
+
+.ResultsBox {
+  display: flex;
+  flex-direction: column;
+  justify-content: left;
+  align-items: left;
+  padding-top: 10px;
+  border-bottom: 1px solid #ad6af9;
+}
+.TitlesBox {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+  padding-top: 10px;
+  border-bottom: 1px solid #ad6af9;
+  background-color: #e1daf5;
+}
