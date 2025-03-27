@@ -20,6 +20,7 @@ import PadelNowLogo from '../../assets/images/sponsors/PadelNowLogo.png';
 import Patrocinadores from '../../assets/images/sponsors/patrocinadores.png';
 import Checkmark from '../../assets/images/sponsors/checkmark.jpg';
 import ClubLogo from '../../assets/images/sponsors/ClubLogo.png';
+import html2canvas from 'html2canvas';
 
 
 
@@ -31,6 +32,8 @@ const DrawGameCalendar = () => {
         TournamentID: '',
         FilterDate: '',
     });
+    const [buttonClicked, setButtonClicked] = useState(false);
+
     const [headerIsOpen, setHeaderIsOpen] = useState(false);
 
     const [tournament, setTournament] = useState({});
@@ -62,7 +65,7 @@ const DrawGameCalendar = () => {
         { name: 'PadelNowLogo', src: PadelNowLogo },
     ];
 
-    
+
     const AssignGameToTimeSlot = (GameID, TimeSlotID, FromDB) => {
         //  const gameAlreadyExists = timeSlotsRef.current.find(item => item.game && item.game.ID === GameID);
         const TimeSlot = timeSlotsRef.current.find(item => item.ID === TimeSlotID);
@@ -127,6 +130,7 @@ const DrawGameCalendar = () => {
 
             if (IsRowEmpty) {
                 timeSlotsRef.current = timeSlotsRef.current.filter((time) => time.StartTime !== item.StartTime);
+                rowsRef.current--;
             }
             setRefreshScreen(prev => prev + 1);
         })
@@ -232,73 +236,34 @@ const DrawGameCalendar = () => {
             })
     }
 
-    const downloadPDF3 = () => {
 
-        const myArray = [0];
-        const HeaderArea = document.getElementById('PageHeader');
-        const ClubLogoArea = document.getElementById('ClubLogo');
-        const ClubLogoAreaRatio = ClubLogoArea.offsetWidth / ClubLogoArea.offsetHeight;
-        console.log('Loro Ratio', ClubLogoAreaRatio);
-        console.log('Logo Width : ', ClubLogoArea.offsetWidth, '     Height : ', ClubLogoArea.offsetHeight)
-        myArray.forEach(async (group, index) => {
-            try {
-                const captureArea = document.getElementById('PrintableArea');
+    const downloadPDF4 = async () => {
+        setButtonClicked(true);
+        const AreaToExport = document.getElementById('PrintableArea');
+        
+        const margin = 40;
+        const headerSize = 290;
+        const footerSize = 290;
 
-                const margin = 40;
-                const headerSize = 250;
-                const footerSize = 250;
-                let pageWidth = captureArea.offsetWidth + (2 * margin);
-                let pageHeight = captureArea.offsetHeight + headerSize + footerSize;
-                const headerSingleArea = captureArea.offsetWidth / 3;
-
-                const footerImageWidth = captureArea.offsetWidth * 0.2 > 250 ? 1000 : captureArea.offsetWidth;
-                const footerImageHeight = footerImageWidth * 0.2;
-
-
-                const selectedAreaWidth = captureArea.offsetWidth;
-                const selectedAreaHeight = captureArea.offsetHeight;
-                // Si el ancho es mayor que el alto, entonces es landscape y se ntercambian los valores de ancho y alto
-                let doc;
-                if (pageWidth > pageHeight) {
-                    doc = new jsPDF('landscape', 'px', [pageWidth, pageHeight], true);
-                } else {
-                    doc = new jsPDF('portrait', 'px', [pageHeight, pageWidth], true);
-                }
-                pageHeight = doc.internal.pageSize.height || doc.internal.pageSize.getHeight();
-                pageWidth = doc.internal.pageSize.width || doc.internal.pageSize.getWidth();
-                console.log('W: ', selectedAreaWidth, 'H: ', selectedAreaHeight);
-
-                const headerImgWidth = HeaderArea.offsetWidth;
-                const headerImgHeight = HeaderArea.offsetHeight;
-                //   120 / ratio(43)  = 
-                doc.addImage(ClubLogo, 'PNG', (headerSingleArea / 2), 50, 30 * ClubLogoAreaRatio, 80, undefined, 'FAST');
-            //doc.addImage(ClubLogo, 'PNG', (headerSingleArea / 2), 50, 80, 80, undefined, 'FAST');
-
-                doc.addImage(CupLogo, 'PNG', (pageWidth / 2) - 30, 40, 61, 71, undefined, 'FAST');
-
-                doc.addImage(PadelNowLogo, 'PNG', pageWidth - (margin + (headerSingleArea / 2) + 50), 69, 89, 31, undefined, 'FAST');
-
-                await doc.html(HeaderArea, {
-                    callback: function (doc) {
-                        return doc
-                    }, x: (pageWidth / 2) - (HeaderArea.offsetWidth / 2), y: 130, width: pageWidth, windowWidth: pageWidth, margin: 0
-                });
-
-                doc.addImage(Patrocinadores, 'PNG', (pageWidth / 2) - (footerImageWidth / 2), 250 + selectedAreaHeight + 10, footerImageWidth, footerImageHeight, undefined, 'FAST');
-
-                doc.html(captureArea, {
-                    callback: function (doc) {
-                        doc.save(`JuegosDiarios.pdf`);
-                    }, x: margin, y: headerSize, width: pageWidth, windowWidth: pageWidth, margin: 0
-                });
-
-            } catch (error) {
-                console.log('Error convirtiendo a PDF', error.message);
-            }
+        let pageWidth =   (columnsRef.current * cellWidth ) + (4 * margin); 
+        let pageHeight = (rowsRef.current * (cellHeight +5)) +headerSize + footerSize; 
+        let doc;
+        if (pageWidth > pageHeight) {
+            doc = new jsPDF('landscape', 'px', [pageWidth, pageHeight], true);
+        } else {
+            doc = new jsPDF('portrait', 'px', [ pageHeight, pageWidth], true);
         }
-        )
-    }
 
+
+        doc.html(AreaToExport, {
+            callback: function (doc) {
+                doc.save(`JuegosDiarios.pdf`);
+                setButtonClicked(false);
+
+            }, x: margin, y:  margin, width: pageWidth , windowWidth: pageWidth , margin: margin
+        });
+
+    }
 
     useEffect(() => {
         loadData();
@@ -529,7 +494,7 @@ const DrawGameCalendar = () => {
             </Grid>
             <Grid item xs={12} sm={6} md={4} lg={6} display={'flex'} justifyContent={'space-around'} alignItems={'center'}>
                 <Button onClick={removeEmptyTimeSlots} variant='contained' color='primary'>Quitar renglones vacios</Button>
-                <Button onClick={downloadPDF3} variant='contained' color='primary'>Descargar PDF</Button>
+                <Button onClick={downloadPDF4} variant='contained' color='primary'>Descargar PDF</Button>
             </Grid>
         </Grid>
     )
@@ -538,8 +503,8 @@ const DrawGameCalendar = () => {
 
     const renderHeader = () => {
         return (
-            <>
-                <Box hidden display={'flex'} justifyContent={'center'} flexDirection={'column'} justifyItems={'center'} width={`751px`} paddingX={6}>
+            <div  id='PageHeader' >
+                <Box hidden display={'flex'} justifyContent={'center'} flexDirection={'column'} justifyItems={'center'}  width={`${columnsRef.current * cellWidth}px`} paddingX={6}>
                     <Grid container >
                         <Grid id='ClubLogo' item xs={4} display={'flex'} justifyContent={'flex-start'} alignItems={'center'}>
                             <img src={ClubLogo} alt="AllSeasons" height={'40px'} />
@@ -553,7 +518,7 @@ const DrawGameCalendar = () => {
                         </Grid>
                     </Grid>
                 </Box>
-                <Box id='PageHeader' hidden display={'flex'} justifyContent={'center'} flexDirection={'column'} justifyItems={'center'} width={`751px`} paddingX={6}>
+                <Box hidden display={'flex'} justifyContent={'center'} flexDirection={'column'} justifyItems={'center'} width={`${columnsRef.current * cellWidth}px`}paddingX={6}>
                     <Grid container >
                         <Grid item xs={12} display={'flex'} justifyContent={'center'} alignItems={'center'} flexDirection={'column'}>
                             <Typography variant={'h6'} fontSize={11} fontWeight={700}  >
@@ -569,12 +534,12 @@ const DrawGameCalendar = () => {
                     </Grid>
 
                 </Box>
-            </>
+            </div>
         )
     }
     const renderFooter = () => {
         return (
-            <Box id='PageFooter' hidden display={'flex'} justifyContent={'center'} flexDirection={'column'} justifyItems={'center'} width={`751px`} paddingX={6}>
+            <Box id='PageFooter' hidden display={'flex'} justifyContent={'center'} flexDirection={'column'} justifyItems={'center'} width={`${columnsRef.current * cellWidth}px`} paddingX={6}>
                 <Grid container >
                     <Grid item xs={12} display={'flex'} justifyContent={'center'} alignItems={'center'}>
                         <img src={Patrocinadores} alt="Patrocinadores" height={'160px'} />
@@ -593,18 +558,21 @@ const DrawGameCalendar = () => {
 
             <MainCard title={'Impresión de calendario de juegos por dia'} >
                 {renderSelectors()}
-                {renderHeader()}
                 <PerfectScrollbar style={{ height: '100%', maxHeight: 'calc(100vh - 310px)', overflow: 'visible' }} >
-                    <Grid container spacing={1} width={columnsRef.current * cellWidth} id='PrintableArea' >
+                    <div id='PrintableArea'>
+
+                    {renderHeader()}
+                    <Grid container spacing={1} width={columnsRef.current * cellWidth} paddingY={3} >
 
                         {timeSlotsRef.current.map((item, index) => (
                             <Grid item key={index} xs={gridItemSizeRef.current} >
                                 {(item.game && item.game.ID !== 0) ? (renderGame(item)) : (emptyTimeSlot(item))}
                             </Grid>
 
-                        ))}
+))}
                     </Grid>
                     {renderFooter()}
+                </div>
                 </PerfectScrollbar>
 
             </MainCard >
