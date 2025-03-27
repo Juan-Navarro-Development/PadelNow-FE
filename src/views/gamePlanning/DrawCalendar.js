@@ -5,7 +5,7 @@ import PerfectScrollbar from 'react-perfect-scrollbar';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useAlert } from 'react-alert';
-import { IconBackspace, IconSearch, IconClockCancel, IconPencil, IconPencilPlus, IconMenu2, IconUserCheck, IconUserX, IconCheck, IconStar } from '@tabler/icons';
+import { IconBackspace, IconClockCancel, IconPencil, IconPencilPlus, IconMenu2, IconUserCheck, IconUserX, IconCheck, IconStar } from '@tabler/icons';
 import SelectTournaments from 'components/SelectTournament';
 import axios from 'axios';
 import CaptureGameResults from './CaptureGameResults';
